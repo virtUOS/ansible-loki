@@ -1,0 +1,32 @@
+server:
+  http_listen_port: {{ promtail_http_listen_port }}
+  grpc_listen_port: {{ promtail_grpc_listen_port }}
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: 'https://{{ loki_host }}:{{ loki_http_listen_port }}/loki/api/v1/push'
+
+scrape_configs:
+{% if promtail_job_journal %}
+  - job_name: journal
+    journal:
+      max_age: 12h
+      labels:
+        job: systemd
+        host: {{ inventory_hostname }}
+    relabel_configs:
+      - source_labels: ['__journal__systemd_unit']
+        target_label: 'unit'
+{% endif %}
+{% if promtail_job_nginx %}
+  - job_name: nginx
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: nginx
+          host: {{ inventory_hostname }}
+          __path__: /var/log/nginx/*log
+{% endif %}

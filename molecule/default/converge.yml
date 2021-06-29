@@ -1,0 +1,13 @@
+---
+- name: converge
+  hosts: all
+  become: true
+  vars:
+    - has_promtail: true
+    - has_loki: true
+    - promtail_job_journal: true
+    - promtail_job_nginx: true
+  tasks:
+    - name: include loki
+      include_role:
+        name: loki

@@ -1,0 +1,105 @@
+---
+
+- name: install dependencies
+  apt:
+    update_cache: true
+    name:
+      - python3-passlib
+  when: ansible_os_family == "Debian"
+
+- name: create promtail user
+  user:
+    name: promtail
+    state: present
+
+- name: create promtail directory
+  file:
+    path: /etc/promtail
+    state: directory
+    owner: promtail
+    group: promtail
+    mode: '0744'
+
+- name: create promtail config
+  template:
+    src: '{{ promtail_config_template }}'
+    dest: /etc/promtail/promtail_config.yml
+    owner: promtail
+    group: promtail
+    mode: '0644'
+  notify: restart promtail
+
+- name: get checksum
+  block:
+    - name: get sha256sums-file link
+      set_fact:
+        _sha256_uri: '{{ item.browser_download_url }}'
+      when: "'SHA256SUMS' in item.name"
+      with_items: '{{ json_reponse.json.assets }}'
+    - name: get checksum from github
+      set_fact:
+        _checksums: "{{ lookup('url', _sha256_uri, wantlist=True) | list }}"
+    - name: get checksum for amd64
+      set_fact:
+        promtail_checksum: "{{ item.split(' ')[0] }}"
+      with_items: "{{ _checksums }}"
+      when: "'promtail-linux-amd64.zip' in item"
+  when: promtail_remote_version["failed"] or promtail_remote_version["content"] | b64decode != json_reponse.json.tag_name
+
+- name: download and install promtail
+  block:
+    - name: get promtail download link
+      set_fact:
+        _promtail_uri: '{{ item.browser_download_url }}'
+      when: "'promtail-linux-amd64.zip' in item.name"
+      with_items: '{{ json_reponse.json.assets }}'
+    - name: download archive
+      get_url:
+        url: '{{ _promtail_uri }}'
+        dest: /tmp/promtail-linux-amd64.zip
+        checksum: 'sha256:{{ promtail_checksum }}'
+        mode: '0644'
+    - name: unpack archive
+      unarchive:
+        remote_src: true
+        src: /tmp/promtail-linux-amd64.zip
+        dest: /tmp
+    - name: move promtail
+      copy:
+        remote_src: true
+        src: /tmp/promtail-linux-amd64
+        dest: /usr/local/bin/promtail
+        owner: root
+        group: root
+        mode: '0755'
+    - name: clean up temp
+      file:
+        path: '{{ item }}'
+        state: absent
+      with_items:
+        - /tmp/promtail-linux-amd64.zip
+        - /tmp/promtail-linux-amd64
+    - name: create binary version file
+      template:
+        src: promtail_version.j2
+        dest: /etc/promtail/promtail_version
+        owner: promtail
+        group: promtail
+        mode: '0644'
+  when: promtail_remote_version["failed"] or promtail_remote_version["content"] | b64decode != json_reponse.json.tag_name
+  notify: restart promtail
+
+- name: copy service file
+  copy:
+    src: promtail.service
+    dest: /etc/systemd/system/
+    mode: '0644'
+    owner: root
+    group: root
+  notify: restart promtail
+
+- name: start and enable promtail
+  service:
+    name: promtail
+    state: started
+    enabled: true

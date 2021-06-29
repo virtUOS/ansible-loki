@@ -1,0 +1,31 @@
+---
+
+- name: get meta data
+  block:
+    - name: get latest release data
+      uri:
+        url: https://api.github.com/repos/grafana/loki/releases/latest
+        return_content: true
+        headers:
+          Accept: "application/vnd.github.v3+json"
+      register: json_reponse
+    - name: get promtail version on remote
+      slurp:
+        src: /etc/promtail/promtail_version
+      register: promtail_remote_version
+      ignore_errors: true
+      when: has_promtail
+    - name: get loki version on remote
+      slurp:
+        src: /etc/loki/loki_version
+      register: loki_remote_version
+      ignore_errors: true
+      when: has_loki
+
+- name: install loki
+  import_tasks: install_loki.yml
+  when: has_loki
+
+- name: install promtail
+  import_tasks: install_promtail.yml
+  when: has_promtail

@@ -1,0 +1,23 @@
+---
+
+has_promtail: false
+has_loki: false
+
+# loki related variables
+loki_http_listen_port: 3100
+loki_grpc_listen_port: 9096
+# set 'loki' to the loki host if promtail
+# and loki are not on the same machine
+loki_host: localhost
+# to enable deletion after a certain period
+# set to 'true' and the period duration (e.g. 672h)
+loki_retention_deletes: false
+loki_retention_period: 0s
+loki_config_template: 'loki_config.yml.j2'
+
+# promtail related variables
+promtail_http_listen_port: 9080
+promtail_grpc_listen_port: 0
+promtail_job_journal: false
+promtail_job_nginx: false
+promtail_config_template: 'promtail_config.yml.j2'

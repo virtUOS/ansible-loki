@@ -1,0 +1,57 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: podman
+platforms:
+  - name: centos
+    image: docker.io/centos:8
+    pre_build_image: false
+    env:
+      ansible_user: ansible
+      sudo_group: wheel
+      deploy_group: deployer
+    command: /sbin/init
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  - name: ubuntu_focal
+    image: docker.io/ubuntu:20.04
+    pre_build_image: false
+    env:
+      ansible_user: ansible
+      sudo_group: sudo
+      deploy_group: deployer
+    command: /sbin/init
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  - name: ubuntu_bionic
+    image: docker.io/ubuntu:18.04
+    pre_build_image: false
+    env:
+      ansible_user: ansible
+      sudo_group: sudo
+      deploy_group: deployer
+    command: /sbin/init
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+provisioner:
+  name: ansible
+  inventory:
+    host_vars:
+      centos:
+        ansible_user: ansible
+      ubuntu:
+        ansible_user: ansible

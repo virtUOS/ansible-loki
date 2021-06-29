@@ -1,0 +1,15 @@
+galaxy_info:
+  role_name: loki
+  author: Timo Nogueira Brockmeyer
+  description: install loki and promtail
+  company: ELAN e.V.
+  license: MIT
+  min_ansible_version: 2.1
+  platforms:
+    - name: Ubuntu
+      versions:
+        - 20.04
+        - 18.04
+    - name: Centos
+      version:
+        - 8
