@@ -2,7 +2,7 @@ galaxy_info:
   role_name: loki
   author: Timo Nogueira Brockmeyer
   description: install loki and promtail
-  company: ELAN e.V.
+  company: virtUOS
   license: MIT
   min_ansible_version: 2.1
   platforms:

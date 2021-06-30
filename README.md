@@ -51,17 +51,17 @@ Of course you can also install promtail and loki on the same machine.
 ## Development
 
 For development and testing you can use [molecule](https://molecule.readthedocs.io/en/latest/).
-With podman as driver you can install it like this (if you use docker, substitute `podman` with `docker`):
+With podman as driver you can install it like this – preferably in a virtual environment (if you use docker, substitute `podman` with `docker`):
 
 ```bash
 pip install "molecule[ansible,podman]"
 ```
 
-Then you can create the test instances, apply the ansible config (converge) and destroy the test instances with these commands:
+Then you can *create* the test instances, apply the ansible config (*converge*) and *destroy* the test instances with these commands:
 
 ```bash
 molecule create
-molecule convert
+molecule converge
 molecule destroy
 ```
 
@@ -73,4 +73,4 @@ If you want to inspect a running test instance use `molecule login --host <insta
 
 ## Author Information
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+[virtUOS](https://www.virtuos.uni-osnabrueck.de)
