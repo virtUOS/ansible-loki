@@ -13,8 +13,8 @@ ENV {{ var|upper }} {{ value }}
 {% endif %}
 
 # Install molecule and ansible dependencies
-RUN if [ $(command -v apt-get) ]; then apt-get update && apt-get install -y python sudo bash ca-certificates iproute2 zip init && apt-get clean; \
-    elif [ $(command -v dnf) ]; then dnf makecache && dnf --assumeyes install python3 sudo python*-dnf bash iproute zip && dnf clean all; fi
+RUN if [ $(command -v apt-get) ]; then apt-get update && apt-get install -y python sudo bash ca-certificates iproute2 init && apt-get clean; \
+    elif [ $(command -v dnf) ]; then dnf makecache && dnf --assumeyes install python3 sudo python*-dnf bash iproute && dnf clean all; fi
 
 # Create ansible user with sudo permissions and membership in `DEPLOY_GROUP`
 RUN set -xe \

@@ -1,12 +1,5 @@
 ---
 
-- name: install dependencies
-  apt:
-    update_cache: true
-    name:
-      - python3-passlib
-  when: ansible_os_family == "Debian"
-
 - name: create loki user
   user:
     name: loki

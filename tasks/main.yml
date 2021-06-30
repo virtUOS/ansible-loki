@@ -1,5 +1,17 @@
 ---
 
+- name: install dependencies
+  package:
+    name: zip
+    state: present
+
+- name: install debian specific dependencies
+  apt:
+    update_cache: true
+    name: python3-passlib
+    state: present
+  when: ansible_os_family == "Debian"
+
 - name: get meta data
   block:
     - name: get latest release data
