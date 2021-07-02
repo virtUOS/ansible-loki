@@ -15,24 +15,24 @@
 
 - name: make /var/log accessible to promtail
   block:
-  - name: make adm group own /var/log on RedHat
-    file:
-      path: /var/log
-      group: adm
-      recurse: true
-    when: ansible_os_family == 'RedHat'
-  - name: add user to group that can read logs
-    user:
-      name: promtail
-      groups: adm
-      append: yes
+    - name: make adm group own /var/log on RedHat
+      file:
+        path: /var/log
+        group: adm
+        recurse: true
+      when: ansible_os_family == 'RedHat'
+    - name: add user to group that can read logs
+      user:
+        name: promtail
+        groups: adm
+        append: true
   when: make_varlog_accessible
 
 - name: add promtail user to more groups
   user:
     name: promtail
     groups: '{{ item }}'
-    append: yes
+    append: true
   loop: '{{ additional_groups }}'
   when: additional_groups is defined
 
