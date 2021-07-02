@@ -11,9 +11,13 @@ For loki you can specify your log retention period by setting the variable `loki
 `loki_retention_period` to the desired retention period.
 
 For promtail, as an example config, you can turn on two jobs as an example config by setting either one of `promtail_job_journal` or `promtail_job_nginx` to `true`.
-
 In most cases, however, you would probably want to provide your own config-templates for loki and promtail.
 You can achieve this by changing the path to the template files in `loki_config_template` and `promtail_config_template`.
+
+Make sure that promtail has reading rights on the corresponding log files.
+Per default the promtail user will be added to the `adm` group that can read logs.
+If you want to change this behavior set `make_varlog_accessible` to `false`.
+You can also add the user to arbitrary other groups by specifying `additional_groups` as a list.
 
 ## Example Playbook
 

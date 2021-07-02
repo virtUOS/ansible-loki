@@ -21,3 +21,9 @@ promtail_grpc_listen_port: 0
 promtail_job_journal: false
 promtail_job_nginx: false
 promtail_config_template: 'promtail_config.yml.j2'
+# add promtail user to 'adm' group that can read the logs
+make_varlog_accessible: true
+# define this variable in list form if you want to
+# add the promtail user to more user groups, to be
+# able to read their logs
+# additional_groups: [group1, group2]
