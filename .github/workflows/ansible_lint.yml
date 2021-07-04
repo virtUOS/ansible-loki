@@ -1,6 +1,6 @@
 ---
 
-name: ansible lint
+name: ansible tests
 
 on:  # noqa yaml
   - push
@@ -14,7 +14,14 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: install dependencies
-        run: pip3 install ansible ansible-lint yamllint
+        run: >
+          pip3 install
+          ansible
+          ansible-lint
+          yamllint
+          molecule
+          molecule-docker
+          molecule-podman
 
-      - name: lint playbook
-        run: ansible-lint
+      - name: test playbook
+        run: molecule test --driver-name docker
