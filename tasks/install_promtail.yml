@@ -60,7 +60,10 @@
         promtail_checksum: "{{ item.split(' ')[0] }}"
       with_items: "{{ _checksums }}"
       when: "'promtail-linux-amd64.zip' in item"
-  when: promtail_remote_version["failed"] or promtail_remote_version["content"] | b64decode != json_reponse.json.tag_name
+  when: >
+    promtail_remote_version["failed"]
+    or promtail_remote_version["content"] | b64decode
+    != json_reponse.json.tag_name
 
 - name: download and install promtail
   block:
@@ -102,7 +105,10 @@
         owner: promtail
         group: promtail
         mode: '0644'
-  when: promtail_remote_version["failed"] or promtail_remote_version["content"] | b64decode != json_reponse.json.tag_name
+  when: >
+    promtail_remote_version["failed"]
+    or promtail_remote_version["content"] | b64decode
+    != json_reponse.json.tag_name
   notify: restart promtail
 
 - name: copy service file

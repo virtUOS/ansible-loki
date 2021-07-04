@@ -37,7 +37,9 @@
         loki_checksum: "{{ item.split(' ')[0] }}"
       with_items: "{{ _checksums }}"
       when: "'loki-linux-amd64.zip' in item"
-  when: loki_remote_version["failed"] or loki_remote_version["content"] | b64decode != json_reponse.json.tag_name
+  when: >
+    loki_remote_version["failed"]
+    or loki_remote_version["content"] | b64decode != json_reponse.json.tag_name
 
 - name: download and install loki
   block:
@@ -79,7 +81,9 @@
         owner: loki
         group: loki
         mode: '0644'
-  when: loki_remote_version["failed"] or loki_remote_version["content"] | b64decode != json_reponse.json.tag_name
+  when: >
+    loki_remote_version["failed"]
+    or loki_remote_version["content"] | b64decode != json_reponse.json.tag_name
   notify: restart loki
 
 - name: copy service file
